@@ -409,58 +409,66 @@ function InteractiveDeterminantCalculator() {
   const [isPlaying, setIsPlaying] = useState(false)
 
   // Calculate determinant step by step using cofactor expansion
+  const minor1 = matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]
+  const minor2 = matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]
+  const minor3 = matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0]
+  const result = matrix[0][0] * minor1 - matrix[0][1] * minor2 + matrix[0][2] * minor3
+
   const steps = [
     {
-      title: "Initial Matrix",
-      formula: "\\begin{vmatrix} a_1 & a_2 & a_3 \\\\ b_1 & b_2 & b_3 \\\\ c_1 & c_2 & c_3 \\end{vmatrix}",
+      title: "Step 1: Write the matrix",
+      description: "We have the 3×3 matrix with vectors a, b, c",
+      formula: `\\begin{vmatrix} ${matrix[0][0]} & ${matrix[0][1]} & ${matrix[0][2]} \\\\ ${matrix[1][0]} & ${matrix[1][1]} & ${matrix[1][2]} \\\\ ${matrix[2][0]} & ${matrix[2][1]} & ${matrix[2][2]} \\end{vmatrix}`,
       highlight: [],
     },
     {
-      title: "Expand by first row",
-      formula: `a_1 \\begin{vmatrix} b_2 & b_3 \\\\ c_2 & c_3 \\end{vmatrix} - a_2 \\begin{vmatrix} b_1 & b_3 \\\\ c_1 & c_3 \\end{vmatrix} + a_3 \\begin{vmatrix} b_1 & b_2 \\\\ c_1 & c_2 \\end{vmatrix}`,
+      title: "Step 2: Expand by first row (Cofactor Expansion)",
+      description: "Use the formula: a₁·M₁ - a₂·M₂ + a₃·M₃",
+      formula: `${matrix[0][0]} \\begin{vmatrix} ${matrix[1][1]} & ${matrix[1][2]} \\\\ ${matrix[2][1]} & ${matrix[2][2]} \\end{vmatrix} - ${matrix[0][1]} \\begin{vmatrix} ${matrix[1][0]} & ${matrix[1][2]} \\\\ ${matrix[2][0]} & ${matrix[2][2]} \\end{vmatrix} + ${matrix[0][2]} \\begin{vmatrix} ${matrix[1][0]} & ${matrix[1][1]} \\\\ ${matrix[2][0]} & ${matrix[2][1]} \\end{vmatrix}`,
+      highlight: [],
+    },
+    {
+      title: "Step 3: Calculate first minor M₁",
+      description: `M₁ = (${matrix[1][1]} × ${matrix[2][2]}) - (${matrix[1][2]} × ${matrix[2][1]})`,
+      formula: `${matrix[0][0]} \\times [(${matrix[1][1]} \\times ${matrix[2][2]}) - (${matrix[1][2]} \\times ${matrix[2][1]})] = ${matrix[0][0]} \\times ${minor1}`,
       highlight: [0],
     },
     {
-      title: "Calculate first minor",
-      formula: `${matrix[0][0]} \\times (${matrix[1][1]} \\times ${matrix[2][2]} - ${matrix[1][2]} \\times ${matrix[2][1]})`,
-      highlight: [0],
-      minor1: matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1],
-    },
-    {
-      title: "Calculate second minor",
-      formula: `${matrix[0][1]} \\times (${matrix[1][0]} \\times ${matrix[2][2]} - ${matrix[1][2]} \\times ${matrix[2][0]})`,
+      title: "Step 4: Calculate second minor M₂",
+      description: `M₂ = (${matrix[1][0]} × ${matrix[2][2]}) - (${matrix[1][2]} × ${matrix[2][0]})`,
+      formula: `${matrix[0][1]} \\times [(${matrix[1][0]} \\times ${matrix[2][2]}) - (${matrix[1][2]} \\times ${matrix[2][0]})] = ${matrix[0][1]} \\times ${minor2}`,
       highlight: [1],
-      minor2: matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0],
     },
     {
-      title: "Calculate third minor",
-      formula: `${matrix[0][2]} \\times (${matrix[1][0]} \\times ${matrix[2][1]} - ${matrix[1][1]} \\times ${matrix[2][0]})`,
+      title: "Step 5: Calculate third minor M₃",
+      description: `M₃ = (${matrix[1][0]} × ${matrix[2][1]}) - (${matrix[1][1]} × ${matrix[2][0]})`,
+      formula: `${matrix[0][2]} \\times [(${matrix[1][0]} \\times ${matrix[2][1]}) - (${matrix[1][1]} \\times ${matrix[2][0]})] = ${matrix[0][2]} \\times ${minor3}`,
       highlight: [2],
-      minor3: matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0],
     },
     {
-      title: "Combine all terms",
-      formula: `${matrix[0][0]} \\times ${matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]} - ${matrix[0][1]} \\times ${matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]} + ${matrix[0][2]} \\times ${matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0]}`,
+      title: "Step 6: Combine all terms",
+      description: "Add/subtract all the cofactor terms",
+      formula: `(${matrix[0][0]} \\times ${minor1}) - (${matrix[0][1]} \\times ${minor2}) + (${matrix[0][2]} \\times ${minor3})`,
       highlight: [],
     },
     {
-      title: "Final Result",
-      formula: `= ${
-        matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]) -
-        matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]) +
-        matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0])
-      }`,
+      title: "Step 7: Final Result",
+      description: "The determinant (mixed product) value",
+      formula: `= ${matrix[0][0] * minor1} - ${matrix[0][1] * minor2} + ${matrix[0][2] * minor3} = ${result}`,
       highlight: [],
-      result:
-        matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1]) -
-        matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0]) +
-        matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0]),
+      result,
     },
   ]
 
   const handleMatrixChange = (i: number, j: number, value: string) => {
     const newMatrix = matrix.map((row) => [...row])
-    newMatrix[i][j] = Number.parseFloat(value) || 0
+    // Allow empty string or parse as number, default to 0 only if NaN after parse
+    if (value === "" || value === "-") {
+      newMatrix[i][j] = 0
+    } else {
+      const parsed = Number.parseFloat(value)
+      newMatrix[i][j] = Number.isNaN(parsed) ? 0 : parsed
+    }
     setMatrix(newMatrix)
     setStep(0)
     setIsPlaying(false)
@@ -485,16 +493,16 @@ function InteractiveDeterminantCalculator() {
     if (!isPlaying) return
     const timer = setInterval(() => {
       nextStep()
-    }, 2000)
+    }, 2500)
     return () => clearInterval(timer)
   }, [isPlaying, step])
 
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex flex-col items-center gap-8">
       {/* Matrix Input */}
-      <div className="bg-slate-800/50 p-6 rounded-xl border border-orange-500/30">
-        <h3 className="text-lg font-bold text-orange-300 mb-4 text-center">Input Matrix (Editable)</h3>
-        <div className="grid grid-cols-3 gap-3">
+      <div className="bg-slate-800/60 p-6 rounded-xl border-2 border-orange-500/40 shadow-lg shadow-orange-500/10">
+        <h3 className="text-xl font-bold text-orange-300 mb-4 text-center">Matrix Values (Click to Edit)</h3>
+        <div className="grid grid-cols-3 gap-4">
           {matrix.map((row, i) =>
             row.map((val, j) => (
               <Input
@@ -502,24 +510,38 @@ function InteractiveDeterminantCalculator() {
                 type="number"
                 value={val}
                 onChange={(e) => handleMatrixChange(i, j, e.target.value)}
-                className={`w-20 h-16 text-center text-xl font-bold bg-slate-900 border-2 ${
-                  steps[step].highlight.includes(j) ? "border-orange-500" : "border-slate-700"
+                className={`w-24 h-20 text-center text-2xl font-bold bg-slate-900/80 border-2 transition-all ${
+                  steps[step]?.highlight?.includes(j)
+                    ? "border-orange-500 shadow-lg shadow-orange-500/50 scale-105"
+                    : "border-slate-600 hover:border-slate-500"
                 }`}
               />
             )),
           )}
         </div>
+        <p className="text-xs text-slate-400 text-center mt-3">{`Matrix format: [a₁ a₂ a₃; b₁ b₂ b₃; c₁ c₂ c₃]`}</p>
       </div>
 
-      {/* Current Step Display */}
-      <div className="bg-gradient-to-br from-teal-500/10 to-purple-500/10 p-6 rounded-xl border border-teal-500/30 w-full max-w-3xl">
-        <h3 className="text-xl font-bold text-teal-400 mb-4 text-center">{steps[step].title}</h3>
-        <div className="bg-slate-900/50 p-6 rounded-lg overflow-x-auto">
+      {/* Current Step Display with better animation */}
+      <div className="bg-gradient-to-br from-teal-500/20 to-purple-500/20 p-8 rounded-xl border-2 border-teal-500/50 w-full max-w-4xl shadow-xl">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-2xl font-bold text-teal-300">{steps[step].title}</h3>
+          <span className="px-4 py-2 bg-slate-800/80 rounded-lg text-purple-300 font-mono text-sm">
+            Step {step + 1}/{steps.length}
+          </span>
+        </div>
+
+        <p className="text-slate-300 text-lg mb-4 text-center">{steps[step].description}</p>
+
+        <div className="bg-slate-900/70 p-8 rounded-lg overflow-x-auto border border-slate-700">
           <BlockTex math={steps[step].formula} />
         </div>
+
         {steps[step].result !== undefined && (
-          <div className="mt-4 p-4 bg-emerald-500/20 rounded-lg border-2 border-emerald-500">
-            <p className="text-center text-2xl font-bold text-emerald-300">Result: {steps[step].result.toFixed(2)}</p>
+          <div className="mt-6 p-6 bg-gradient-to-r from-emerald-500/30 to-teal-500/30 rounded-lg border-2 border-emerald-400 animate-pulse">
+            <p className="text-center text-3xl font-bold text-emerald-300">
+              Final Result: <span className="text-emerald-200">{steps[step].result.toFixed(3)}</span>
+            </p>
           </div>
         )}
       </div>
@@ -658,11 +680,11 @@ function NotationSlide() {
 function DeterminantSlide() {
   return (
     <div className="min-h-screen flex flex-col p-8 md:p-12 bg-gradient-to-br from-slate-900 to-slate-800">
-      <h1 className="text-4xl md:text-5xl font-bold text-orange-400 mb-6">Determinant Calculation - Minor Method</h1>
+      <h1 className="text-4xl md:text-5xl font-bold text-orange-400 mb-6">Example: Determinant Calculation</h1>
       <div className="flex-1 flex flex-col justify-center">
         <div className="bg-slate-800/70 p-6 rounded-xl border border-orange-500/30 mb-6">
           <p className="text-lg text-slate-300 text-center mb-4">
-            Calculate using <span className="text-orange-400 font-bold">Cofactor Expansion</span> (Minor Method):
+            Using the <span className="text-orange-400 font-bold">Cofactor Expansion Method</span> (Minor Method)
           </p>
           <div className="bg-slate-900/50 p-6 rounded-lg">
             <BlockTex math="a_1(b_2 c_3 - b_3 c_2) - a_2(b_1 c_3 - b_3 c_1) + a_3(b_1 c_2 - b_2 c_1)" />
