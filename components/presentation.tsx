@@ -987,7 +987,7 @@ function DeterminantSlide() {
 }
 
 function GeometricMeaningSlide() {
-  const animation = useAnimationSteps(4, 1800);
+  const animation = useAnimationSteps(4, 1000);
 
   return (
     <div className="min-h-screen flex flex-col p-8 md:p-12 bg-linear-to-br from-slate-900 via-purple-900/20 to-slate-900">
